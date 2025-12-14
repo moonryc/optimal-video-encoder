@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx serve shop"
+    "dev": "nx serve shop",
+    "migration:generate": "migrationName=${npm_config_name:-AutoMigration}; typeorm-ts-node-commonjs migration:generate apps/api/src/db/migrations/$migrationName -d apps/api/src/db/data-source.ts"
   },
   "private": true,
   "dependencies": {
