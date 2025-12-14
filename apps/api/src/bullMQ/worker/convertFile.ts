@@ -6,6 +6,7 @@ import { MoveFileError, StalledFFMPEGError } from '../errors';
 import { ConversionStatus } from '../../db';
 import { getLoggerByName } from '../../utils/getLoggerByName';
 import BullMQConversionItem from '../BullMQConversionItem';
+import { CustomJobProgress } from './utils';
 
 const logger = getLoggerByName('convertFile.ts');
 
@@ -31,8 +32,13 @@ const onFFMPEGProgress = async ({ conversionItem, progress, reject }: { conversi
       const secondsElapsed = timeParts[0] * 3600 + timeParts[1] * 60 + timeParts[2];
       const percent = Math.min(Number(((secondsElapsed / conversionItem.duration) * 100).toFixed(1)), 100);
       const readablePercent = isNaN(percent) ? 0 : percent;
-      await conversionItem.job.updateProgress(readablePercent)
-      if (CONFIG.logProgress) console.log(`[${conversionItem.title}] | [${conversionItem.path}] | ⏱ Progress: ${readablePercent}% | Time Remaining: ${conversionItem.duration - secondsElapsed}s | Frame: ${progress.frames}`);
+      const timeRemaining = conversionItem.duration - secondsElapsed
+      const customProgress:CustomJobProgress = {
+        percentage: readablePercent,
+        timeRemaining,
+      }
+      await conversionItem.job.updateProgress(customProgress)
+      if (CONFIG.logProgress) console.log(`[${conversionItem.title}] | [${conversionItem.path}] | ⏱ Progress: ${customProgress.percentage}% | Time Remaining: ${customProgress.timeRemaining}s | Frame: ${progress.frames}`);
     }
   } catch (err: unknown) {
     logger.error(`[${conversionItem.title}] | [${conversionItem.path}] | Error updating conversion item progress`);

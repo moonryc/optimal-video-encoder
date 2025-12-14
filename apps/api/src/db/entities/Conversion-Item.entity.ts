@@ -21,6 +21,9 @@ export class ConversionItem {
   @Column({ type: 'double precision', default: 0 })
   progress!: number;
 
+  @Column({ type: 'double precision', default: 0 })
+  timeRemaining!: number;
+
   @Column({ type: 'text' })
   path!: string;
 

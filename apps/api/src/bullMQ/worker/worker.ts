@@ -5,7 +5,7 @@ import { CONFIG } from '../../config';
 import handleJob from './handleJob';
 import BullMQConversionItem from '../BullMQConversionItem';
 import { StalledFFMPEGError } from '../errors';
-import { PROGRESS_UPDATE_DEBOUNCE_MS } from './utils';
+import { isCustomJobProgressGuard, PROGRESS_UPDATE_DEBOUNCE_MS } from './utils';
 import { DataSource } from 'typeorm';
 
 const logger = getLoggerByName('bullMQ/worker.ts');
@@ -82,6 +82,7 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
         if (err instanceof StalledFFMPEGError) {
           await conversionItem.update({
             stallCounter: conversionItem.stallCounter + 1,
+            timeRemaining: 0,
           });
           await conversionItem.job.remove();
           if (conversionItem.stallCounter <= 10) {
@@ -104,6 +105,7 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
         logger.error(`💥 Updating conversion item status ${stackTraceError}`);
         await conversionItem.update({
           error: stackTraceError,
+          timeRemaining: 0,
           erroredAt: new Date(),
           completedAt: new Date(),
           status: ConversionStatus.FAILED,
@@ -121,7 +123,7 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
   );
 
   worker.on('progress', async (job: Job<string>, progress: JobProgress) => {
-    if (typeof progress !== 'number') return;
+    if (!isCustomJobProgressGuard(progress)) return;
     const conversionItem = await new BullMQConversionItem({
       job: job,
       repo: conversionItemRepo,
@@ -129,15 +131,18 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
 
     const now = Date.now();
     const lastUpdatedAt = lastProgressUpdateByJobId.get(conversionItem.jobId);
-    if (lastUpdatedAt && now - lastUpdatedAt < PROGRESS_UPDATE_DEBOUNCE_MS)
+    //early exit to prevent debouncing
+    if (lastUpdatedAt && now - lastUpdatedAt < PROGRESS_UPDATE_DEBOUNCE_MS){
       return;
+    }
 
     lastProgressUpdateByJobId.set(conversionItem.jobId, now);
 
     try {
       await conversionItem.update({
-        progress,
+        progress: progress.percentage,
         status: ConversionStatus.PROCESSING,
+        timeRemaining: progress.timeRemaining,
       });
     } catch (error) {
       lastProgressUpdateByJobId.delete(conversionItem.jobId);
