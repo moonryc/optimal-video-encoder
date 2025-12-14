@@ -12,7 +12,7 @@ const logger = getLoggerByName("bullMQ/handleJob.ts")
 const handleJob = async ({job,conversionItemRepo}:{job: Job<string>, conversionItemRepo: Repository<ConversionItem>}): Promise<void> => {
   try{
     if(job.name !== JobName.CONVERT_TO_1080_AND_ENCODE) throw new InvalidJobNameError()
-    const conversionItem= await new BullMQConversionItem({job, repo: conversionItemRepo}).initalize();
+    const conversionItem= await new BullMQConversionItem({job, repo: conversionItemRepo}).initialize();
     const stillExists = await conversionItem.checkIfFileStillExists()
     if (!stillExists) throw new FileNoLongerExistsError(conversionItem);
     logger.info(`🔄 Processing ${conversionItem.title}`);

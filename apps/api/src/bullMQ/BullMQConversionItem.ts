@@ -1,10 +1,11 @@
 import { ConversionItem, ConversionStatus } from '../db';
 import { Job } from 'bullmq';
 import { QueryDeepPartialEntity, Repository } from 'typeorm';
-import path from "path";
-import fs from "fs";
+import path from 'path';
+import fs from 'fs';
 import { CONFIG } from '../config';
 import { getLoggerByName } from '../utils/getLoggerByName';
+import { ConversionItemDoesNotExistError } from './errors';
 
 
 export default class BullMQConversionItem extends ConversionItem {
@@ -41,7 +42,6 @@ export default class BullMQConversionItem extends ConversionItem {
 
   public cleanupOriginalDestinations() {
     if (!CONFIG.cleanupOriginals) return;
-
     fs.unlink(this.path, async (err) => {
       if (err) {
         this.logger.error(`[${this.title}] | [${this.path}] | Failed to delete original: ${err.message}`);
@@ -50,9 +50,7 @@ export default class BullMQConversionItem extends ConversionItem {
       else {
         this.logger.info(`[${this.title}] | [${this.path}] | Original deleted`);
       }
-
     });
-
   }
 
   public get destinationDir(): string {
@@ -63,8 +61,7 @@ export default class BullMQConversionItem extends ConversionItem {
       fs.mkdirSync(destDir, { recursive: true });
     }
 
-    const destPath = path.join(destDir, parsed.name + ".mp4");
-    return destPath;
+    return path.join(destDir, parsed.name + '.mp4');
   }
 
   public get tempDestination(): string {
@@ -76,8 +73,7 @@ export default class BullMQConversionItem extends ConversionItem {
       fs.mkdirSync(tempDir, { recursive: true });
     }
 
-    const tempPath = path.join(tempDir, parsed.name + ".mp4");
-    return tempPath;
+    return path.join(tempDir, parsed.name + '.mp4');
   }
 
   public async cleanupMoveToDestinationDirectory() {
@@ -91,9 +87,9 @@ export default class BullMQConversionItem extends ConversionItem {
     return this.job.id;
   }
 
-  async initalize(){
+  async initialize(){
     const ci = this.repo.findOne({where:{id: this.jobId}});
-    if(!ci) throw new Error(`${this.job.id} doesn't exist`);
+    if(!ci) throw new ConversionItemDoesNotExistError(this)
     Object.assign(this, ci)
     return this
   }

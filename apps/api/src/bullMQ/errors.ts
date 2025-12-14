@@ -7,6 +7,13 @@ export class StalledFFMPEGError extends Error {
   }
 }
 
+export class ConversionItemDoesNotExistError extends Error {
+  constructor(input:ConversionItem) {
+    const message = `Conversion Item: [${input.path}] does not exist`;
+    super(message);
+  }
+}
+
 export class InvalidJobNameError extends Error {
   constructor() {
     const message = `INVALID JOB NAME`;

@@ -36,7 +36,7 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
       const conversionItem = await new BullMQConversionItem({
         job,
         repo: conversionItemRepo,
-      }).initalize();
+      }).initialize();
       await conversionItem.update({
         completedAt: new Date(),
         progress: 100,
@@ -74,7 +74,7 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
       const conversionItem = await new BullMQConversionItem({
         job: job,
         repo: conversionItemRepo,
-      }).initalize();
+      }).initialize();
       let stackTraceError = `CUSTOM StackTrace: \n [ERROR]: ${job?.stacktrace?.join(
         '\n [ERROR]: '
       )}`;
@@ -125,7 +125,7 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
     const conversionItem = await new BullMQConversionItem({
       job: job,
       repo: conversionItemRepo,
-    }).initalize();
+    }).initialize();
 
     const now = Date.now();
     const lastUpdatedAt = lastProgressUpdateByJobId.get(conversionItem.jobId);
