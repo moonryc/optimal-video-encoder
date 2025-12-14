@@ -1,11 +1,11 @@
 import env from "env-var";
-import settings from "./settings.json";
+
 const getEnv = env.get;
 
 const locationConfig = {
-  watchDirectory: settings.inputDestination,
-  destination: settings.outputDestination,
-  tempDestination: `${settings.outputDestination}/temp`,
+  watchDirectory: "", //settings.inputDestination,
+  destination: "",//settings.outputDestination,
+  tempDestination: "",//`${settings.outputDestination}/temp`,
 };
 
 const redisConfig = {
