@@ -18,6 +18,12 @@ export class ConversionItem {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Column({ type: 'double precision', default: 0 })
+  progress!: number;
+
+  @Column({ type: 'text' })
+  fileName!: string;
+
   @Column({ type: 'text', nullable: true })
   error?: string | null;
 
