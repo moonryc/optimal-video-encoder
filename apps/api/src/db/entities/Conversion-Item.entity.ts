@@ -1,3 +1,4 @@
+import { ConversionStatus } from '@org/models';
 import {
   Column,
   CreateDateColumn,
@@ -6,15 +7,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export enum ConversionStatus {
-  PENDING = "PENDING",
-  PROCESSING = "PROCESSING",
-  COMPLETED = "COMPLETED",
-  FAILED = "FAILED"
-}
+
 
 @Entity({ name: 'conversion_items' })
-export class ConversionItem {
+export class ConversionItem implements ConversionItem {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 

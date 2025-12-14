@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Product, ApiResponse } from '@org/models';
+import { ConversionItem, ApiResponse } from '@org/models';
 
 const API_URL = 'http://localhost:3333/api';
 
 export function useProduct(id: string | undefined) {
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<ConversionItem | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,7 +20,7 @@ export function useProduct(id: string | undefined) {
 
       try {
         const response = await fetch(`${API_URL}/products/${id}`);
-        const data: ApiResponse<Product> = await response.json() as ApiResponse<Product>;
+        const data: ApiResponse<ConversionItem> = await response.json() as ApiResponse<ConversionItem>;
 
         if (!data.success) {
           throw new Error(data.error || 'Failed to load product');

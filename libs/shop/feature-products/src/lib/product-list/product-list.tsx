@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Product, ProductFilter } from '@org/models';
+import { ConversionItem, ProductFilter } from '@org/models';
 import { useProducts, useCategories } from '@org/shop-data';
 import {
   ProductGrid,
@@ -45,7 +45,7 @@ export function ProductList() {
     setCurrentPage(1); // Reset to first page when filter changes
   }, [searchTerm, selectedCategory, inStockOnly]);
 
-  const handleProductSelect = (product: Product) => {
+  const handleProductSelect = (product: ConversionItem) => {
     navigate(`/products/${product.id}`);
   };
 

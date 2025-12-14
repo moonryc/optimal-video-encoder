@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Product, ApiResponse, PaginatedResponse, ProductFilter } from '@org/models';
+import { ConversionItem, ApiResponse, PaginatedResponse, ProductFilter } from '@org/models';
 
 const API_URL = 'http://localhost:3333/api';
 
@@ -8,7 +8,7 @@ export function useProducts(
   page = 1,
   pageSize = 12
 ) {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ConversionItem[]>([]);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ export function useProducts(
         }
 
         const response = await fetch(`${API_URL}/products?${params}`);
-        const data: ApiResponse<PaginatedResponse<Product>> = await response.json() as ApiResponse<PaginatedResponse<Product>>;
+        const data: ApiResponse<PaginatedResponse<ConversionItem>> = await response.json() as ApiResponse<PaginatedResponse<ConversionItem>>;
 
         if (!data.success) {
           throw new Error(data.error || 'Failed to load products');

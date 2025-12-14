@@ -1,6 +1,6 @@
-import { Product } from '@org/models';
+import { ConversionItem } from '@org/models';
 
-export const createMockProduct = (overrides?: Partial<Product>): Product => ({
+export const createMockProduct = (overrides?: Partial<ConversionItem>): ConversionItem => ({
   id: '1',
   name: 'Test Product',
   description: 'Test Description',
@@ -13,7 +13,7 @@ export const createMockProduct = (overrides?: Partial<Product>): Product => ({
   ...overrides,
 });
 
-export const createMockProductList = (count = 3): Product[] => {
+export const createMockProductList = (count = 3): ConversionItem[] => {
   return Array.from({ length: count }, (_, i) =>
     createMockProduct({
       id: `${i + 1}`,

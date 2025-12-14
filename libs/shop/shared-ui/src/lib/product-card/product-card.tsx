@@ -1,9 +1,9 @@
-import { Product } from '@org/models';
+import { ConversionItem } from '@org/models';
 import styles from './product-card.module.css';
 
 interface ProductCardProps {
-  product: Product;
-  onProductClick: (product: Product) => void;
+  product: ConversionItem;
+  onProductClick: (product: ConversionItem) => void;
 }
 
 export function ProductCard({ product, onProductClick }: ProductCardProps) {

@@ -1,10 +1,10 @@
-import { Product } from '@org/models';
+import { ConversionItem } from '@org/models';
 import { ProductCard } from '../product-card/product-card';
 import styles from './product-grid.module.css';
 
 interface ProductGridProps {
-  products: Product[];
-  onProductSelect: (product: Product) => void;
+  products: ConversionItem[];
+  onProductSelect: (product: ConversionItem) => void;
 }
 
 export function ProductGrid({ products, onProductSelect }: ProductGridProps) {

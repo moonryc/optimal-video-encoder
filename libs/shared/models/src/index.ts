@@ -1,1 +1,1 @@
-export * from './lib/product.model.js';
+export * from './lib/ConversionItem.model.js';
