@@ -1,4 +1,4 @@
-import { ConversionItem, ConversionStatus } from '../../db';
+import { ConversionItem } from '../../db';
 import { getLoggerByName } from '../../utils/getLoggerByName';
 import { Job, JobProgress, Worker } from 'bullmq';
 import { CONFIG } from '../../config';
@@ -7,6 +7,7 @@ import BullMQConversionItem from '../BullMQConversionItem';
 import { StalledFFMPEGError } from '../errors';
 import { isCustomJobProgressGuard, PROGRESS_UPDATE_DEBOUNCE_MS } from './utils';
 import { DataSource } from 'typeorm';
+import { ConversionStatus } from '@org/models';
 
 const logger = getLoggerByName('bullMQ/worker.ts');
 
