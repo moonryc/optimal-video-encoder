@@ -4,9 +4,9 @@
   "license": "MIT",
   "scripts": {
     "dev": "nx serve shop",
-    "typeorm": "typeorm-ts-node-commonjs",
-    "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run -d .apps/api/src/db/data-source.ts",
-    "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d .apps/api/src/db/data-source.ts",
+    "typeorm": "TS_NODE_PROJECT=apps/api/tsconfig.typeorm.json typeorm-ts-node-commonjs",
+    "migration:run": "TS_NODE_PROJECT=apps/api/tsconfig.typeorm.json ts-node ./node_modules/typeorm/cli.js migration:run -d ./apps/api/src/db/data-source.ts",
+    "migration:revert": "TS_NODE_PROJECT=apps/api/tsconfig.typeorm.json ts-node ./node_modules/typeorm/cli.js migration:revert -d ./apps/api/src/db/data-source.ts",
     "migration:generate": "npm run typeorm -- migration:generate ./apps/api/src/db/migrations -d ./apps/api/src/db/data-source.ts"
   },
   "private": true,

@@ -17,7 +17,7 @@ const redisConfig = {
 }
 
 const postgresConfig = {
-  host: getEnv("POSTGRES_HOST").default("postgres").asString(),
+  host: getEnv("POSTGRES_HOST").default("localhost").asString(),
   port: getEnv("POSTGRES_PORT").default(5432).asInt(),
   username: getEnv("POSTGRES_USERNAME").default("app").asString(),
   password: getEnv("POSTGRES_PASSWORD").default("app").asString(),
