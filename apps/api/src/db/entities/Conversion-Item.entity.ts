@@ -27,7 +27,7 @@ export class ConversionItem {
   @Column({ type: 'text', nullable: true })
   error?: string | null;
 
-  @Column({ enum:ConversionStatus, default: 'pending' })
+  @Column({ enum:ConversionStatus, default: ConversionStatus.PENDING })
   status!: ConversionStatus;
 
   @CreateDateColumn({ name: 'created_at' })
