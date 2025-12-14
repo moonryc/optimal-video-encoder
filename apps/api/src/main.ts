@@ -1,13 +1,12 @@
 import express from 'express';
-import { ProductsService } from '@org/api-products';
-import { ApiResponse, Product, ProductFilter, PaginatedResponse } from '@org/models';
+import routes from './routes';
 import { initDataSource } from './db/data-source';
+import transcoder from './bullMQ/transcoder';
 
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT ? Number(process.env.PORT) : 3333;
 
 const app = express();
-const productsService = new ProductsService();
 
 // Middleware
 app.use(express.json());
@@ -24,13 +23,16 @@ app.use((req, res, next) => {
   }
 });
 
+// API routes
+app.use('/api', routes);
 
 const start = async () => {
   try {
-    await initDataSource();
+    const ds =await initDataSource();
     app.listen(port, host, () => {
       console.log(`[ ready ] http://${host}:${port}`);
     });
+    void transcoder({ds})
   } catch (error) {
     console.error('Failed to initialize database connection', error);
     process.exit(1);

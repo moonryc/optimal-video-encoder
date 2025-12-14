@@ -1,0 +1,1 @@
+export const PROGRESS_UPDATE_DEBOUNCE_MS = 30 * 1000;

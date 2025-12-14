@@ -22,13 +22,31 @@ export class ConversionItem {
   progress!: number;
 
   @Column({ type: 'text' })
-  fileName!: string;
+  path!: string;
+
+  @Column({ type: 'double precision' })
+  duration!: number;
+
+  @Column({ type: 'boolean' })
+  is4k!: boolean;
 
   @Column({ type: 'text', nullable: true })
   error?: string | null;
 
   @Column({ enum:ConversionStatus, default: ConversionStatus.PENDING })
   status!: ConversionStatus;
+
+  @Column({type: 'timestamp with time zone', nullable: true,})
+  startedAt?: Date | null;
+
+  @Column({type: 'timestamp with time zone', nullable: true,})
+  erroredAt?: Date | null;
+
+  @Column({type: 'timestamp with time zone', nullable: true,})
+  completedAt?: Date | null;
+
+  @Column({type: 'int', default: 0})
+  stallCounter!: number;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
