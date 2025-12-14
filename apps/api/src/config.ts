@@ -9,20 +9,20 @@ const locationConfig = {
 };
 
 const redisConfig = {
-  host: getEnv("REDIS_HOST").default("127.0.0.1").asString(), //TODO: get from env
-  port: getEnv("REDIS_PORT").default(25683).asInt(), //TODO: get from env
-  password: getEnv("REDIS_PASSWORD").default("0!TeyXvUS5ikCL").asString(),
+  host: getEnv("REDIS_HOST").default("redis").asString(),
+  port: getEnv("REDIS_PORT").default(6379).asInt(),
+  password: getEnv("REDIS_PASSWORD").default("").asString(),
   workerConcurrency: getEnv("WORKER_CONCURRENCY").default(6).asInt(),
   queueName: getEnv("QUEUE_NAME").default("video-transcoder").asString()
 }
 
 const postgresConfig = {
-  host: getEnv("POSTGRES_HOST").default("127.0.0.1").asString(),
-  port: getEnv("POSTGRES_PORT").default("5432").asInt(),
+  host: getEnv("POSTGRES_HOST").default("postgres").asString(),
+  port: getEnv("POSTGRES_PORT").default(5432).asInt(),
   username: getEnv("POSTGRES_USERNAME").default("app").asString(),
   password: getEnv("POSTGRES_PASSWORD").default("app").asString(),
-  user: getEnv("POSTGRES_USER").default("moonryc").asString(),
-  database: getEnv("POSTGRES_DATABASE").default("netflix_plus").asString()
+  user: getEnv("POSTGRES_USER").default("app").asString(),
+  database: getEnv("POSTGRES_DATABASE").default("optimal_video_encoder").asString()
 }
 
 export const CONFIG = {
