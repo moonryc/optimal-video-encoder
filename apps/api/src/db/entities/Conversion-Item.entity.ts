@@ -32,7 +32,7 @@ export class ConversionItem implements ConversionItem {
   @Column({ type: 'text', nullable: true })
   error?: string | null;
 
-  @Column({ enum:ConversionStatus, default: ConversionStatus.PENDING })
+  @Column({ type: 'enum', enum: ConversionStatus, default: ConversionStatus.PENDING })
   status!: ConversionStatus;
 
   @Column({type: 'timestamp with time zone', nullable: true,})

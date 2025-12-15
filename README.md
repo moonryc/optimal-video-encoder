@@ -20,7 +20,6 @@ This repository demonstrates a production-ready React monorepo with:
   - `@org/shop-data` - Data access layer for shop features
   - `@org/shop-shared-ui` - Shared UI components
   - `@org/models` - Shared data models
-  - `@org/api-products` - API product service library
   - `@org/shared-test-utils` - Shared testing utilities
 
 - **E2E Testing**

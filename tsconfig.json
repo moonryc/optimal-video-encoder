@@ -13,9 +13,6 @@
       "path": "./apps/shop"
     },
     {
-      "path": "./libs/api/products"
-    },
-    {
       "path": "./libs/shared/models"
     },
     {

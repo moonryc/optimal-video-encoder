@@ -9,7 +9,7 @@ const locationConfig = {
 };
 
 const redisConfig = {
-  host: getEnv("REDIS_HOST").default("redis").asString(),
+  host: getEnv("REDIS_HOST").default("localhost").asString(),
   port: getEnv("REDIS_PORT").default(6379).asInt(),
   password: getEnv("REDIS_PASSWORD").default("").asString(),
   workerConcurrency: getEnv("WORKER_CONCURRENCY").default(6).asInt(),
@@ -29,7 +29,9 @@ export const CONFIG = {
   postgresConfig,
   locationConfig,
   redisConfig,
-  cleanupOriginals: getEnv("CLEANUP_ORIGINALS").default("true").asBool(),
+  disableTranscoder: getEnv("DISABLE_TRANSCODER").default("false").asBool(),
+  disableFileWatch: getEnv("DISABLE_FILE_WATCH").default("true").asBool(),
+  cleanupOriginals: getEnv("CLEANUP_ORIGINALS").default("false").asBool(),
   disableDB: getEnv("DISABLE_DB").default("false").asBool(),
   logProgress: getEnv("LOG_PROGRESS").default("true").asBool(),
 }

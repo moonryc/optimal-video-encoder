@@ -1,4 +1,4 @@
-import { ConversionItem, ConversionStatus } from '../db';
+import { ConversionItem } from '../db';
 import { Job } from 'bullmq';
 import { QueryDeepPartialEntity, Repository } from 'typeorm';
 import path from 'path';
@@ -6,6 +6,7 @@ import fs from 'fs';
 import { CONFIG } from '../config';
 import { getLoggerByName } from '../utils/getLoggerByName';
 import { ConversionItemDoesNotExistError } from './errors';
+import { ConversionStatus } from '@org/models';
 
 
 export default class BullMQConversionItem extends ConversionItem {

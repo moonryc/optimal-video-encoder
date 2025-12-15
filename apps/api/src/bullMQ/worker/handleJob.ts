@@ -1,11 +1,12 @@
 import { Job } from 'bullmq';
-import { ConversionItem, ConversionStatus } from '../../db';
+import { ConversionItem } from '../../db';
 import { Repository } from 'typeorm';
 import BullMQConversionItem from '../BullMQConversionItem';
 import { convertToMp4 } from './convertFile';
 import { getLoggerByName } from '../../utils/getLoggerByName';
 import { FileNoLongerExistsError, InvalidJobNameError } from '../errors';
 import { JobName } from '../queue/utils';
+import { ConversionStatus } from '@org/models';
 
 const logger = getLoggerByName("bullMQ/handleJob.ts")
 

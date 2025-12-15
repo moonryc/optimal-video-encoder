@@ -3,10 +3,10 @@ import fs from 'fs';
 
 import { CONFIG } from '../../config';
 import { MoveFileError, StalledFFMPEGError } from '../errors';
-import { ConversionStatus } from '../../db';
 import { getLoggerByName } from '../../utils/getLoggerByName';
 import BullMQConversionItem from '../BullMQConversionItem';
 import { CustomJobProgress } from './utils';
+import { ConversionStatus } from '@org/models';
 
 const logger = getLoggerByName('convertFile.ts');
 
