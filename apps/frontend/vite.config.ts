@@ -5,7 +5,7 @@ import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 export default defineConfig(() => ({
   root: __dirname,
-  cacheDir: '../../node_modules/.vite/apps/shop',
+  cacheDir: '../../node_modules/.vite/apps/frontend',
   server: {
     port: 4200,
     host: 'localhost',
@@ -28,7 +28,7 @@ export default defineConfig(() => ({
     },
   },
   test: {
-    name: '@org/shop',
+    name: '@org/frontend',
     watch: false,
     globals: true,
     environment: 'jsdom',

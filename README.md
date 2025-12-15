@@ -10,7 +10,7 @@ This repository demonstrates a production-ready React monorepo with:
 
 - **2 Applications**
 
-  - `shop` - React e-commerce application with product listings and detail views
+  - `frontend` (`@org/frontend`) - React e-commerce frontend with product listings and detail views
   - `api` - Backend API serving product data
 
 - **7 Libraries**
@@ -23,7 +23,7 @@ This repository demonstrates a production-ready React monorepo with:
   - `@org/shared-test-utils` - Shared testing utilities
 
 - **E2E Testing**
-  - `shop-e2e` - Playwright tests for the shop application
+  - `frontend-e2e` (`@org/frontend-e2e`) - Playwright tests for the frontend application
 
 ## 🚀 Quick Start
 
@@ -35,8 +35,8 @@ cd <your-repository-name>
 # Install dependencies
 npx install
 
-# Serve the React shop application (this will simultaneously serve the API backend)
-npx nx serve shop
+# Serve the React frontend application (this will simultaneously serve the API backend)
+npx nx serve @org/frontend
 
 # ...or you can serve the API separately
 npx nx serve api
@@ -51,7 +51,7 @@ npx nx run-many -t test
 npx nx run-many -t lint
 
 # Run e2e tests
-npx nx e2e shop-e2e
+npx nx e2e @org/frontend-e2e
 
 # Run tasks in parallel
 
@@ -83,7 +83,7 @@ Enforces architectural constraints using tags. Each project has specific depende
 npx nx graph
 
 # View a specific project's details
-npx nx show project shop --web
+npx nx show project @org/frontend --web
 ```
 
 [Learn more about module boundaries →](https://nx.dev/features/enforce-module-boundaries)
@@ -94,10 +94,10 @@ End-to-end testing with Playwright is pre-configured:
 
 ```bash
 # Run e2e tests
-npx nx e2e shop-e2e
+npx nx e2e @org/frontend-e2e
 
 # Run e2e tests in CI mode
-npx nx e2e-ci shop-e2e
+npx nx e2e-ci @org/frontend-e2e
 ```
 
 [Learn more about E2E testing →](https://nx.dev/technologies/test-tools/playwright/introduction#e2e-testing)
@@ -138,8 +138,8 @@ This feature helps maintain a healthy CI pipeline by automatically detecting and
 
 ```
 ├── apps/
-│   ├── shop/           [scope:shop]    - React e-commerce app
-│   ├── shop-e2e/                       - E2E tests for shop
+│   ├── frontend/       [scope:shop]    - React e-commerce app
+│   ├── frontend-e2e/                   - E2E tests for frontend
 │   └── api/            [scope:api]     - Backend API
 ├── libs/
 │   ├── shop/
@@ -163,7 +163,7 @@ This repository uses tags to enforce module boundaries:
 
 | Project                 | Tags                         | Can Import From              |
 | ----------------------- | ---------------------------- | ---------------------------- |
-| `shop`                  | `scope:shop`                 | `scope:shop`, `scope:shared` |
+| `frontend` (`@org/frontend`) | `scope:shop`                 | `scope:shop`, `scope:shared` |
 | `api`                   | `scope:api`                  | `scope:api`, `scope:shared`  |
 | `shop-feature-products` | `scope:shop`, `type:feature` | `scope:shop`, `scope:shared` |
 | `shop-data`             | `scope:shop`, `type:data`    | `scope:shared`               |
@@ -175,12 +175,12 @@ This repository uses tags to enforce module boundaries:
 # Project exploration
 npx nx graph                                    # Interactive dependency graph
 npx nx list                                     # List installed plugins
-npx nx show project shop --web                 # View project details
+npx nx show project @org/frontend --web        # View project details
 
 # Development
-npx nx serve shop                              # Serve React app
+npx nx serve @org/frontend                     # Serve React app
 npx nx serve api                               # Serve backend API
-npx nx build shop                              # Build React app
+npx nx build @org/frontend                     # Build React app
 npx nx test shop-data                          # Test a specific library
 npx nx lint shop-feature-products              # Lint a specific library
 
