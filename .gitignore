@@ -5,6 +5,8 @@ dist
 tmp
 out-tsc
 
+optimal-video-encoder.log
+
 # dependencies
 node_modules
 
