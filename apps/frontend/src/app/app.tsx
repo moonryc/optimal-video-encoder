@@ -11,8 +11,7 @@ import ConversionItemRow from './ConversionItemRow/ConversionItemRow';
 import Box from '@mui/material/Box';
 
 export function App() {
-
-  const { data } = useConversionItemsQuery()
+  const { data } = useConversionItemsQuery();
 
   return (
     <div className="app">
@@ -23,31 +22,24 @@ export function App() {
       </header>
       <main className="app-main">
         <Box mx={10} mt={2}>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell/>
-              <TableCell>Title</TableCell>
-              <TableCell align="right">Status</TableCell>
-                <TableCell align="right">Time Remaining</TableCell>
-                <TableCell align="right">4k</TableCell>
-                {/*<TableCell align="right">duration</TableCell>*/}
-                {/*<TableCell align="right">error</TableCell>*/}
-                {/*<TableCell align="right">{conversionItem?.startedAt}</TableCell>*/}
-                {/*<TableCell align="right">{conversionItem.erroredAt}</TableCell>*/}
-                {/*<TableCell align="right">{conversionItem.deletedAt}</TableCell>*/}
-                {/*<TableCell align="right">{conversionItem.createdAt}</TableCell>*/}
-                {/*<TableCell align="right">{conversionItem.updatedAt}</TableCell>*/}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data?.items.map((ci) => (
-                <ConversionItemRow conversionItem={ci}/>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell />
+                  <TableCell>Title</TableCell>
+                  <TableCell align="right">Status</TableCell>
+                  <TableCell align="right">Time Remaining</TableCell>
+                  <TableCell align="right">4k</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data?.items.map((ci) => (
+                  <ConversionItemRow key={ci.id} conversionItem={ci} />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Box>
       </main>
     </div>

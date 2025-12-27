@@ -2,18 +2,18 @@ import { ConversionItem } from '@org/models';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import CheckIcon from '@mui/icons-material/Check';
-import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Status from './Status';
 import IconButton from '@mui/material/IconButton';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Box from '@mui/material/Box';
-import TableBody from '@mui/material/TableBody';
-import Table from '@mui/material/Table';
-import TableHead from '@mui/material/TableHead';
 import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import TransposableTable, {
+  TransposableTableProps,
+} from '../TransposableTable/TransposableTable';
 
 type ConversionItemRowProps = {
   conversionItem: ConversionItem;
@@ -24,13 +24,40 @@ const ConversionItemRow = ({ conversionItem }: ConversionItemRowProps) => {
 
   const title = conversionItem.path.split('/').pop();
 
-  // <TableCell align="right">{conversionItem.duration}</TableCell>
-  // <TableCell align="right">{conversionItem.stallCounter}</TableCell>
-  // {/*<TableCell align="right">{conversionItem?.startedAt}</TableCell>*/}
-  // {/*<TableCell align="right">{conversionItem.erroredAt}</TableCell>*/}
-  // {/*<TableCell align="right">{conversionItem.deletedAt}</TableCell>*/}
-  // {/*<TableCell align="right">{conversionItem.createdAt}</TableCell>*/}
-  // {/*<TableCell align="right">{conversionItem.updatedAt}</TableCell>*/}
+  const tableData = useMemo<Omit<TransposableTableProps, 'transpose'>>(() => {
+    const {
+      duration,
+      stallCounter,
+      createdAt,
+      startedAt,
+      updatedAt,
+      erroredAt,
+    } = conversionItem;
+
+    const data = {
+      headers: [
+        'Duration',
+        'Stall Counter',
+        'Created At',
+        'Started At',
+        'Updated At',
+      ],
+      rows: [
+        duration,
+        stallCounter,
+        createdAt.toISOString(),
+        updatedAt.toISOString(),
+        startedAt?.toISOString(),
+      ],
+    };
+
+    if (erroredAt) {
+      data.headers.push('Errored At');
+      data.rows.push(erroredAt.toISOString());
+    }
+
+    return data;
+  }, [conversionItem]);
 
   return (
     <>
@@ -68,36 +95,21 @@ const ConversionItemRow = ({ conversionItem }: ConversionItemRowProps) => {
               <Typography variant="h6" gutterBottom component="div">
                 Info
               </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Customer</TableCell>
-                    <TableCell align="right">Amount</TableCell>
-                    <TableCell align="right">Total price ($)</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {/*{row.history.map((historyRow) => (*/}
-                  {/*  <TableRow key={historyRow.date}>*/}
-                  {/*    <TableCell component="th" scope="row">*/}
-                  {/*      {historyRow.date}*/}
-                  {/*    </TableCell>*/}
-                  {/*    <TableCell>{historyRow.customerId}</TableCell>*/}
-                  {/*    <TableCell align="right">{historyRow.amount}</TableCell>*/}
-                  {/*    <TableCell align="right">*/}
-                  {/*      {Math.round(historyRow.amount * row.price * 100) / 100}*/}
-                  {/*    </TableCell>*/}
-                  {/*  </TableRow>*/}
-                  {/*))}*/}
-                </TableBody>
-              </Table>
-              {conversionItem.error &&(
-                <Box maxHeight={"4rem"} sx={{overflowY: "auto", overscrollBehaviorY:"none"}}>
+              <Divider />
+              <TransposableTable
+                transpose
+                headers={tableData.headers}
+                rows={tableData.rows}
+              />
+              {conversionItem.error && (
+                <Box
+                  maxHeight={'4rem'}
+                  sx={{ overflowY: 'auto', overscrollBehaviorY: 'none' }}
+                >
                   <Typography>Error:</Typography>
                   <Typography>{conversionItem.error}</Typography>
-                </Box>)
-              }
+                </Box>
+              )}
             </Box>
           </Collapse>
         </TableCell>
