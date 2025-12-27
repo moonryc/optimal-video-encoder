@@ -45,15 +45,15 @@ const ConversionItemRow = ({ conversionItem }: ConversionItemRowProps) => {
       rows: [
         duration,
         stallCounter,
-        createdAt.toISOString(),
-        updatedAt.toISOString(),
-        startedAt?.toISOString(),
+        createdAt,
+        updatedAt,
+        startedAt,
       ],
     };
 
     if (erroredAt) {
       data.headers.push('Errored At');
-      data.rows.push(erroredAt.toISOString());
+      data.rows.push(erroredAt);
     }
 
     return data;

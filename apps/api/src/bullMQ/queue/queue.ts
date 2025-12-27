@@ -27,6 +27,7 @@ export const startQueue = (ds:DataSource) => {
 
     logger.info(`Enqueueing ${conversionItem.path}`)
     await queue.add(JobName.CONVERT_TO_1080_AND_ENCODE,conversionItem.id, { jobId: conversionItem.id, })
+    return conversionItem;
   }
 
   return {
@@ -34,5 +35,4 @@ export const startQueue = (ds:DataSource) => {
     addToQueue
   } as const
 }
-
 

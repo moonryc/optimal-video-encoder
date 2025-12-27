@@ -9,6 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import ConversionItemRow from './ConversionItemRow/ConversionItemRow';
 import Box from '@mui/material/Box';
+import FileUpload from './FileUpload/FileUpload';
 
 export function App() {
   const { data } = useConversionItemsQuery();
@@ -22,6 +23,7 @@ export function App() {
       </header>
       <main className="app-main">
         <Box mx={10} mt={2}>
+          <FileUpload />
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>

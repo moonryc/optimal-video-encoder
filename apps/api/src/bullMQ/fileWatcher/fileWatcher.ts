@@ -5,7 +5,7 @@ import { getLoggerByName } from '../../utils/getLoggerByName';
 
 const logger = getLoggerByName('fileWatcher.ts');
 
-export const startFileWatcher = ({queueFile}:{queueFile: (path:ConversionItem["path"])=>Promise<void>}) => {
+export const startFileWatcher = ({queueFile}:{queueFile: (path:ConversionItem["path"])=>Promise<ConversionItem>}) => {
   if(CONFIG.disableFileWatch) return logger.warn("🚫 FILE WATCH DISABLED");
 
   chokidar.watch(CONFIG.locationConfig.watchDirectory, {
@@ -21,5 +21,4 @@ export const startFileWatcher = ({queueFile}:{queueFile: (path:ConversionItem["p
     await queueFile(filePath);
   })
 }
-
 
