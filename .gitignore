@@ -6,6 +6,7 @@ tmp
 out-tsc
 
 optimal-video-encoder.log
+/plans
 
 # dependencies
 node_modules
