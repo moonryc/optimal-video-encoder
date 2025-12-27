@@ -8,7 +8,7 @@ import { startQueue } from '../bullMQ/queue/queue';
 
 const uploadDir = path.resolve(
   process.cwd(),
-  'apps/api/src/pendingConversionFiles'
+  './pending-conversion-files'
 );
 
 const ensureUploadDir = () => {
