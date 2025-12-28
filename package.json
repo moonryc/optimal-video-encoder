@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx serve @org/frontend",
+    "dev": "nx run-many -t serve -p @org/frontend @org/api",
     "typeorm": "tsx --tsconfig ./apps/api/tsconfig.typeorm.json ./node_modules/typeorm/cli.js",
     "db:migrate": "tsx --tsconfig ./apps/api/tsconfig.typeorm.json ./node_modules/typeorm/cli.js migration:run -d ./apps/api/src/db/data-source.ts",
     "db:revert": "tsx --tsconfig ./apps/api/tsconfig.typeorm.json ./node_modules/typeorm/cli.js migration:revert -d ./apps/api/src/db/data-source.ts",
