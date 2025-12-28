@@ -9,7 +9,11 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "outDir": "./dist-typeorm"
+    "outDir": "./dist-typeorm",
+    "baseUrl": "../..",
+    "paths": {
+      "@org/models": ["libs/shared/models/src/index.ts"]
+    }
   },
-  "include": ["src/db/**/*.ts"]
+  "include": ["src/**/*.ts", "../../libs/shared/models/src/**/*.ts"]
 }

@@ -1,100 +1,39 @@
 import { type RequestHandler } from 'express';
-import { ApiResponse, ConversionItem, ConversionStatus, PaginatedResponse } from '@org/models';
+import { ApiResponse, ConversionItem, PaginatedResponse } from '@org/models';
+import { initDataSource } from '../db/data-source';
+import { ConversionItem as ConversionItemEntity } from '../db/entities/Conversion-Item.entity';
 
-const placeholderCI: ConversionItem[] = [
-  {
-    id: "conv_001",
-    progress: 12,
-    timeRemaining: 1840, // seconds
-    path: "/media/queue/Movie.One.2023.1080p.mkv",
-    duration: 7200,
-    is4k: false,
-    error: null,
-    status: ConversionStatus.PROCESSING,
-    startedAt: new Date("2025-03-10T14:32:00Z"),
-    erroredAt: null,
-    deletedAt: null,
-    stallCounter: 0,
-    createdAt: new Date("2025-03-10T14:30:00Z"),
-    updatedAt: new Date("2025-03-10T14:45:00Z"),
-  },
-  {
-    id: "conv_002",
-    progress: 100,
-    timeRemaining: 0,
-    path: "/media/movies/Another.Movie.2022.4K.mkv",
-    duration: 8100,
-    is4k: true,
-    error: null,
-    status: ConversionStatus.COMPLETED,
-    startedAt: new Date("2025-03-09T08:10:00Z"),
-    erroredAt: null,
-    deletedAt: null,
-    stallCounter: 0,
-    createdAt: new Date("2025-03-09T08:05:00Z"),
-    updatedAt: new Date("2025-03-09T10:21:00Z"),
-  },
-  {
-    id: "conv_003",
-    progress: 67,
-    timeRemaining: 920,
-    path: "/media/queue/TV.Show.S02E05.1080p.mkv",
-    duration: 2700,
-    is4k: false,
-    error: null,
-    status: ConversionStatus.PROCESSING,
-    startedAt: new Date("2025-03-10T15:01:00Z"),
-    erroredAt: null,
-    deletedAt: null,
-    stallCounter: 1,
-    createdAt: new Date("2025-03-10T14:59:00Z"),
-    updatedAt: new Date("2025-03-10T15:20:00Z"),
-  },
-  {
-    id: "conv_004",
-    progress: 42,
-    timeRemaining: 0,
-    path: "/media/queue/Corrupted.File.2019.mkv",
-    duration: 5400,
-    is4k: false,
-    error: "ffmpeg exited with code 1: Invalid data found when processing input",
-    status: ConversionStatus.FAILED,
-    startedAt: new Date("2025-03-08T22:14:00Z"),
-    erroredAt: new Date("2025-03-08T22:25:30Z"),
-    deletedAt: null,
-    stallCounter: 3,
-    createdAt: new Date("2025-03-08T22:10:00Z"),
-    updatedAt: new Date("2025-03-08T22:25:30Z"),
-  },
-  {
-    id: "conv_005",
-    progress: 0,
-    timeRemaining: 0,
-    path: "/media/queue/Big.Documentary.4K.mkv",
-    duration: 9600,
-    is4k: true,
-    error: null,
-    status: ConversionStatus.FAILED,
-    startedAt: new Date("2025-03-07T18:40:00Z"),
-    erroredAt: null,
-    deletedAt: null,
-    stallCounter: 5,
-    createdAt: new Date("2025-03-07T18:35:00Z"),
-    updatedAt: new Date("2025-03-07T19:10:00Z"),
-  },
-];
-
-// Returns a static list for now; replace with DB-backed fetch when ready.
 export const getConversionItems: RequestHandler = async (_req, res) => {
-  const response: ApiResponse<PaginatedResponse<ConversionItem>> = {
-    data: {
-      items: placeholderCI,
-      total: 0,
-      page: 0,
-      pageSize: 0,
-      totalPages: 0,
-    },
-    success: true,
-  };
-  res.json(response);
+  try {
+    const ds = await initDataSource();
+    const repo = ds.getRepository(ConversionItemEntity);
+    const [items, total] = await repo.findAndCount({
+      order: { createdAt: 'DESC' },
+    });
+
+    const response: ApiResponse<PaginatedResponse<ConversionItem>> = {
+      data: {
+        items,
+        total,
+        page: 0,
+        pageSize: items.length,
+        totalPages: total === 0 ? 0 : 1,
+      },
+      success: true,
+    };
+    res.json(response);
+  } catch (err: unknown) {
+    const response: ApiResponse<PaginatedResponse<ConversionItem>> = {
+      data: {
+        items: [],
+        total: 0,
+        page: 0,
+        pageSize: 0,
+        totalPages: 0,
+      },
+      success: false,
+      error: err instanceof Error ? err.message : 'Failed to load conversion items',
+    };
+    res.status(500).json(response);
+  }
 };

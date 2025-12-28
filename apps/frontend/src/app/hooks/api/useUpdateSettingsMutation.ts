@@ -1,33 +1,32 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { useCallback, useState } from 'react';
 
 import type { Settings } from './useSettingsQuery';
 
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3333/api';
 
 const updateSettings = async (nextSettings: Settings): Promise<Settings> => {
-  const response = await fetch(`${API_BASE}/settings`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(nextSettings),
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to update settings');
-  }
-
-  return response.json() as Promise<Settings>;
+  const response = await axios.post<Settings>(`${API_BASE}/settings`, nextSettings);
+  return response.data;
 };
 
 export const useUpdateSettingsMutation = () => {
-  const queryClient = useQueryClient();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<unknown>(null);
 
-  return useMutation({
-    mutationFn: updateSettings,
-    onSuccess: (data) => {
-      queryClient.setQueryData(['settings'], data);
-      void queryClient.invalidateQueries({ queryKey: ['settings'] });
-    },
-  });
+  const mutate = useCallback(async (nextSettings: Settings) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      return await updateSettings(nextSettings);
+    } catch (err) {
+      setError(err);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  return { mutate, isLoading, error };
 };

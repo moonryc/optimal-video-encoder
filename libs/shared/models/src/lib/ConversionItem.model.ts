@@ -12,11 +12,11 @@ export type ConversionItem = {
   path: string;
   duration: number;
   is4k: boolean;
-  error: string | null;
+  error?: string | null;
   status: ConversionStatus;
-  startedAt: Date | null;
-  erroredAt: Date | null;
-  deletedAt: Date | null;
+  startedAt?: Date | null;
+  erroredAt?: Date | null;
+  deletedAt?: Date | null;
   stallCounter: number;
   createdAt: Date;
   updatedAt: Date;

@@ -3,17 +3,20 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "nx serve @org/frontend",
-    "typeorm": "TS_NODE_PROJECT=apps/api/tsconfig.typeorm.json typeorm-ts-node-commonjs",
-    "migration:run": "TS_NODE_PROJECT=apps/api/tsconfig.typeorm.json ts-node ./node_modules/typeorm/cli.js migration:run -d ./apps/api/src/db/data-source.ts",
-    "migration:revert": "TS_NODE_PROJECT=apps/api/tsconfig.typeorm.json ts-node ./node_modules/typeorm/cli.js migration:revert -d ./apps/api/src/db/data-source.ts",
-    "migration:generate": "npm run typeorm -- migration:generate ./apps/api/src/db/migrations -d ./apps/api/src/db/data-source.ts"
+    "dev": "nx run-many -t serve -p @org/frontend @org/api",
+    "build:frontend": "NX_DAEMON=false nx build @org/frontend",
+    "typeorm": "tsx --tsconfig ./apps/api/tsconfig.typeorm.json ./node_modules/typeorm/cli.js",
+    "db:migrate": "tsx --tsconfig ./apps/api/tsconfig.typeorm.json ./node_modules/typeorm/cli.js migration:run -d ./apps/api/src/db/data-source.ts",
+    "db:revert": "tsx --tsconfig ./apps/api/tsconfig.typeorm.json ./node_modules/typeorm/cli.js migration:revert -d ./apps/api/src/db/data-source.ts",
+    "db:generate": "tsx --tsconfig ./apps/api/tsconfig.typeorm.json ./node_modules/typeorm/cli.js migration:generate ./apps/api/src/db/migrations -d ./apps/api/src/db/data-source.ts"
   },
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
+    "axios": "^1.13.2",
     "bullmq": "^5.66.0",
     "chokidar": "^4.0.3",
     "env-var": "^7.5.0",
@@ -88,6 +91,7 @@
     "ts-jest": "^29.4.0",
     "ts-node": "10.9.1",
     "tslib": "^2.3.0",
+    "tsx": "^4.21.0",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.40.0",
     "vite": "^7.0.0",

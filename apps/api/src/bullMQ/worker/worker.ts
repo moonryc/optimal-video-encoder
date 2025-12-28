@@ -11,7 +11,7 @@ import { ConversionStatus } from '@org/models';
 
 const logger = getLoggerByName('bullMQ/worker.ts');
 
-const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(path:ConversionItem["path"])=>Promise<void> }) => {
+const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(path:ConversionItem["path"])=>Promise<ConversionItem> }) => {
   const conversionItemRepo = ds.getRepository(ConversionItem);
   const lastProgressUpdateByJobId = new Map<string, number>();
 

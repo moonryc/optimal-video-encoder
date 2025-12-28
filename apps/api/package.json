@@ -78,21 +78,16 @@
       },
       "serve": {
         "continuous": true,
-        "executor": "@nx/js:node",
+        "executor": "nx:run-commands",
         "defaultConfiguration": "development",
-        "dependsOn": [
-          "build"
-        ],
         "options": {
-          "buildTarget": "@org/api:build",
-          "runBuildTargetDependencies": false
+          "command": "tsx watch --tsconfig apps/api/tsconfig.app.json apps/api/src/main.ts",
+          "cwd": "{workspaceRoot}"
         },
         "configurations": {
-          "development": {
-            "buildTarget": "@org/api:build:development"
-          },
+          "development": {},
           "production": {
-            "buildTarget": "@org/api:build:production"
+            "command": "tsx --tsconfig apps/api/tsconfig.app.json apps/api/src/main.ts"
           }
         }
       },
@@ -122,7 +117,11 @@
     ]
   },
   "dependencies": {
+    "@org/models": "*",
     "express": "^4.21.2",
-    "@org/models": "*"
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "@types/multer": "^1.4.12"
   }
 }
