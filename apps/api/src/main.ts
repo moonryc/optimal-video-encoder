@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import path from 'path';
 import express from 'express';
 import routes from './routes';
 import { initDataSource } from './db/data-source';
@@ -26,6 +27,15 @@ app.use((req, res, next) => {
 
 // API routes
 app.use('/api', routes);
+
+// Serve frontend static files
+const frontendPath = path.join(__dirname, '../../frontend/dist');
+app.use(express.static(frontendPath));
+
+// SPA fallback - serve index.html for all non-API routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
+});
 
 const start = async () => {
   try {

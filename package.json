@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nx run-many -t serve -p @org/frontend @org/api",
+    "build:frontend": "NX_DAEMON=false nx build @org/frontend",
     "typeorm": "tsx --tsconfig ./apps/api/tsconfig.typeorm.json ./node_modules/typeorm/cli.js",
     "db:migrate": "tsx --tsconfig ./apps/api/tsconfig.typeorm.json ./node_modules/typeorm/cli.js migration:run -d ./apps/api/src/db/data-source.ts",
     "db:revert": "tsx --tsconfig ./apps/api/tsconfig.typeorm.json ./node_modules/typeorm/cli.js migration:revert -d ./apps/api/src/db/data-source.ts",
