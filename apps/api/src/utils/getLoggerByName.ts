@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import { CONFIG } from '../config';
 
 enum LogLevel {
   ERROR = 'error',
@@ -8,19 +9,24 @@ enum LogLevel {
   DEBUG = 'debug',
 }
 
-const fileName = "optimal-video-encoder.log"
+const fileName = "optimal-video-encoder.log";
+const logFilePath = path.join(CONFIG.logOutputLocation, fileName);
 
 export const getLoggerByName = (name: string) => {
 
   const log = (message: string, { logLevel = 'error' }) => {
     const date = new Date().toISOString();
     const logMessage = `[${date}] [${name}] [${logLevel}]: ${message}`
-    //every log should be saved to a log file called convert-tv-and-movies.log
-    if (!fs.existsSync(path.join(process.cwd(), fileName))) {
-      fs.writeFileSync(path.join(process.cwd(), fileName), '');
+    // Ensure log directory exists
+    if (!fs.existsSync(logFilePath)) {
+      fs.mkdirSync(logFilePath, { recursive: true });
     }
-    //each message should be on a new line
-    fs.appendFileSync(path.join(process.cwd(), fileName), logMessage + '\n');
+    // Create log file if it doesn't exist
+    if (!fs.existsSync(logFilePath)) {
+      fs.writeFileSync(logFilePath, '');
+    }
+    // Each message should be on a new line
+    fs.appendFileSync(logFilePath, logMessage + '\n');
     console.log(logMessage);
   }
 

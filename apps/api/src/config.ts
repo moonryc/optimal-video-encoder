@@ -3,9 +3,9 @@ import env from "env-var";
 const getEnv = env.get;
 
 const locationConfig = {
-  watchDirectory: "", //settings.inputDestination,
-  destination: "",//settings.outputDestination,
-  tempDestination: "",//`${settings.outputDestination}/temp`,
+  watchDirectory: getEnv("WATCH_DIR").default("").asString(),
+  destination: getEnv("DESTINATION_DIR").default("./encoder-output/converted-files").asString(),
+  tempDestination: getEnv("TEMP_DIR").default("./encoder-output/converted-files/temp").asString(),
 };
 
 const redisConfig = {
@@ -29,6 +29,7 @@ export const CONFIG = {
   postgresConfig,
   locationConfig,
   redisConfig,
+  logOutputLocation: getEnv("LOG_OUTPUT_LOCATION").default("encoder-output/logs").asString(),
   disableTranscoder: getEnv("DISABLE_TRANSCODER").default("false").asBool(),
   disableFileWatch: getEnv("DISABLE_FILE_WATCH").default("true").asBool(),
   cleanupOriginals: getEnv("CLEANUP_ORIGINALS").default("false").asBool(),
