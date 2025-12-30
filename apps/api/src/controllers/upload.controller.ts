@@ -5,10 +5,11 @@ import fs from 'fs';
 import { ApiResponse, ConversionItem } from '@org/models';
 import { initDataSource } from '../db/data-source';
 import { startQueue } from '../bullMQ/queue/queue';
+import { CONFIG } from '../config';
 
 const uploadDir = path.resolve(
   process.cwd(),
-  './pending-conversion-files'
+  CONFIG.uploadDir
 );
 
 const ensureUploadDir = () => {

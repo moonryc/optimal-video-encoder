@@ -4,6 +4,7 @@ import express from 'express';
 import routes from './routes';
 import { initDataSource } from './db/data-source';
 import transcoder from './bullMQ/transcoder';
+import { CONFIG } from './config';
 
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT ? Number(process.env.PORT) : 3333;
@@ -29,7 +30,7 @@ app.use((req, res, next) => {
 app.use('/api', routes);
 
 // Serve frontend static files
-const frontendPath = path.join(__dirname, '../../frontend/dist');
+const frontendPath = CONFIG.frontendDir
 app.use(express.static(frontendPath));
 
 // SPA fallback - serve index.html for all non-API routes
