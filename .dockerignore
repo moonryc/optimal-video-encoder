@@ -1,0 +1,38 @@
+# Dependencies
+node_modules
+
+# Build outputs
+apps/api/dist
+apps/frontend/dist
+
+# Encoder output (mounted as volume)
+encoder-output
+
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test
+coverage
+.nyc_output
+
+# Misc
+.DS_Store
+*.md
+!README.md
+.env
+.env.*
+
+# Nx
+.nx
+tmp
