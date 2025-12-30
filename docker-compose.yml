@@ -66,12 +66,14 @@ services:
       # Worker
       - WORKER_CONCURRENCY=1
       - QUEUE_NAME=video-transcoder
-      # Features
-      - DISABLE_TRANSCODER=false
+      # Testing Features
+      - CLEANUP_ORIGINALS=true
+      # BETA FEATURE (Turn on at your own risk)
       - DISABLE_FILE_WATCH=true
-      - CLEANUP_ORIGINALS=false
-      - DISABLE_DB=false
+      # FOR TESTING (DO NOT TOUCH)
       - LOG_PROGRESS=true
+      - DISABLE_TRANSCODER=false
+      - DISABLE_DB=false
     depends_on:
       postgres:
         condition: service_healthy
