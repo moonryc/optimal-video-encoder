@@ -50,48 +50,52 @@ const Header = ({
   return (
     <Box mb={3}>
       <Stack spacing={2}>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-          <Button
-            variant="contained"
-            component="label"
-            disabled={isLoading || isDeleteMode}
-          >
-            Upload Video
-            <input
-              ref={inputRef}
-              hidden
-              type="file"
-              accept="video/*,.mkv,.mov,.avi,.webm,.wmv,.flv,.mp4"
-              onChange={handleFileChange}
-            />
-          </Button>
-          <Button
-            variant="outlined"
-            color={isDeleteMode ? 'inherit' : 'error'}
-            onClick={onToggleDeleteMode}
-            disabled={isLoading}
-          >
-            {isDeleteMode ? 'Cancel' : 'Delete'}
-          </Button>
-          {isDeleteMode && (
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box display="flex" gap={2} alignItems="center">
             <Button
               variant="contained"
-              color="error"
-              onClick={onOpenConfirmModal}
-              disabled={selectedCount === 0}
+              component="label"
+              disabled={isLoading || isDeleteMode}
             >
-              Confirm Deletion ({selectedCount})
+              Upload Video
+              <input
+                ref={inputRef}
+                hidden
+                type="file"
+                accept="video/*,.mkv,.mov,.avi,.webm,.wmv,.flv,.mp4"
+                onChange={handleFileChange}
+              />
             </Button>
-          )}
-          {selectedName && !isDeleteMode && (
-            <Typography variant="body2" component="span">
-              {selectedName}
-            </Typography>
-          )}
+            {selectedName && !isDeleteMode && (
+              <Typography variant="body2" component="span">
+                {selectedName}
+              </Typography>
+            )}
+          </Box>
+          <Box display="flex" gap={2}>
+            <Button
+              variant="outlined"
+              color={isDeleteMode ? 'inherit' : 'error'}
+              onClick={onToggleDeleteMode}
+              disabled={isLoading}
+            >
+              {isDeleteMode ? 'Cancel' : 'Delete'}
+            </Button>
+            {isDeleteMode && (
+              <Button
+                variant="contained"
+                color="error"
+                onClick={onOpenConfirmModal}
+                disabled={selectedCount === 0}
+              >
+                Confirm Deletion ({selectedCount})
+              </Button>
+            )}
+          </Box>
         </Box>
         {isLoading && <LinearProgress variant="determinate" value={progress} />}
         {successMessage && <Alert severity="success">{successMessage}</Alert>}
-        {error && <Alert severity="error">{errorMessage}</Alert>}
+        {!!error && <Alert severity="error">{errorMessage}</Alert>}
       </Stack>
     </Box>
   );
