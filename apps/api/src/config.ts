@@ -6,6 +6,7 @@ const locationConfig = {
   watchDirectory: getEnv("WATCH_DIR").default("./encoder-output/pending-conversion-files").asString(),
   destination: getEnv("DESTINATION_DIR").default("./encoder-output/converted-files").asString(),
   tempDestination: getEnv("TEMP_DIR").default("./encoder-output/converted-files/temp").asString(),
+  uploadDir: getEnv("UPLOAD_DIR").default("./encoder-output/pending-conversion-files").asString(),
 };
 
 const redisConfig = {
@@ -30,7 +31,6 @@ export const CONFIG = {
   locationConfig,
   redisConfig,
   frontendDir: getEnv("FRONTEND_DIR").default("./apps/frontend/dist").asString(),
-  uploadDir: getEnv("UPLOAD_DIR").default("./encoder-output/pending-conversion-files").asString(),
   logOutputLocation: getEnv("LOG_OUTPUT_LOCATION").default("./encoder-output/logs").asString(),
   disableTranscoder: getEnv("DISABLE_TRANSCODER").default("false").asBool(),
   disableFileWatch: getEnv("DISABLE_FILE_WATCH").default("true").asBool(),

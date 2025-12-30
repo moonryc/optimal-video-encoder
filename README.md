@@ -1,260 +1,91 @@
-# Nx React Repository
+# Optimal Video Encoder
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A self-hosted video transcoding solution designed for Plex users. Batch convert your media library to a universally compatible MP4 format that works seamlessly across all Plex apps and devices, including the "Watch Together" feature.
 
-✨ A repository showcasing key [Nx](https://nx.dev) features for React monorepos ✨
+## Why?
 
-## 📦 Project Overview
+Plex's built-in optimization creates duplicate files that eat up storage. Different video formats and codecs cause playback issues across devices, especially during Watch Together sessions. This tool solves both problems by converting videos to a standardized format before they hit your Plex library.
 
-This repository demonstrates a production-ready React monorepo with:
+## Features
 
-- **2 Applications**
+- Web-based UI for uploading and monitoring conversions
+- Automatic transcoding to universally compatible MP4
+- 4K downsampling for better streaming compatibility
+- Real-time progress tracking
+- Background job queue with automatic retry on failures
+- Batch processing with configurable concurrency
 
-  - `frontend` (`@org/frontend`) - React e-commerce frontend with product listings and detail views
-  - `api` - Backend API serving product data
+## Prerequisites
 
-- **7 Libraries**
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-  - `@org/shop-feature-products` - Product listing feature (React)
-  - `@org/shop-feature-product-detail` - Product detail feature (React)
-  - `@org/shop-data` - Data access layer for shop features
-  - `@org/shop-shared-ui` - Shared UI components
-  - `@org/models` - Shared data models
-  - `@org/shared-test-utils` - Shared testing utilities
-
-- **E2E Testing**
-  - `frontend-e2e` (`@org/frontend-e2e`) - Playwright tests for the frontend application
-
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-# Clone the repository
-git clone <your-fork-url>
-cd <your-repository-name>
+git clone https://github.com/moonryc/optimal-video-encoder.git
+cd optimal-video-encoder
+docker compose up
+```
+
+Open http://localhost:3333 in your browser.
+
+## Usage
+
+1. Access the web UI at `http://localhost:3333`
+2. Upload video files through the interface
+3. Monitor conversion progress in real-time
+4. Find converted files in `./encoder-output/converted-files/`
+
+## How It Works
+
+```
+Upload → Queue → FFmpeg Transcoding → Output
+```
+
+1. Videos are uploaded via the web UI to `encoder-output/pending-conversion-files/`
+2. A job is added to the BullMQ queue backed by Redis
+3. The worker picks up the job and runs FFmpeg transcoding
+4. Converted files are saved to `encoder-output/converted-files/`
+5. Original files are cleaned up automatically (configurable)
+
+## Configuration
+
+Key environment variables can be modified in `docker-compose.yml`:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `WORKER_CONCURRENCY` | `1` | Number of parallel encoding jobs |
+| `CLEANUP_ORIGINALS` | `true` | Delete original files after conversion |
+| `UPLOAD_DIR` | `/encoder-output/pending-conversion-files` | Upload destination |
+| `DESTINATION_DIR` | `/encoder-output/converted-files` | Output directory |
+
+## Tech Stack
+
+- **Frontend**: React, Material UI
+- **Backend**: Express, TypeORM, BullMQ
+- **Database**: PostgreSQL
+- **Queue**: Redis
+- **Transcoding**: FFmpeg via fluent-ffmpeg
+
+## Development
+
+For local development without Docker:
+
+```bash
+# Start PostgreSQL and Redis
+docker compose up postgres redis
 
 # Install dependencies
-npx install
+npm install
 
-# Serve the React frontend application (this will simultaneously serve the API backend)
-npx nx serve @org/frontend
+# Run database migrations
+npm run db:migrate
 
-# ...or you can serve the API separately
-npx nx serve api
-
-# Build all projects
-npx nx run-many -t build
-
-# Run tests
-npx nx run-many -t test
-
-# Lint all projects
-npx nx run-many -t lint
-
-# Run e2e tests
-npx nx e2e @org/frontend-e2e
-
-# Run tasks in parallel
-
-npx nx run-many -t lint test build e2e --parallel=3
-
-# Visualize the project graph
-npx nx graph
+# Start development servers
+npm run dev
 ```
 
-## ⭐ Featured Nx Capabilities
+## License
 
-This repository showcases several powerful Nx features:
-
-### 1. 🔒 Module Boundaries
-
-Enforces architectural constraints using tags. Each project has specific dependencies it can use:
-
-- `scope:shared` - Can be used by all projects
-- `scope:shop` - Shop-specific libraries
-- `scope:api` - API-specific libraries
-- `type:feature` - Feature libraries
-- `type:data` - Data access libraries
-- `type:ui` - UI component libraries
-
-**Try it out:**
-
-```bash
-# See the current project graph and boundaries
-npx nx graph
-
-# View a specific project's details
-npx nx show project @org/frontend --web
-```
-
-[Learn more about module boundaries →](https://nx.dev/features/enforce-module-boundaries)
-
-### 2. 🎭 Playwright E2E Testing
-
-End-to-end testing with Playwright is pre-configured:
-
-```bash
-# Run e2e tests
-npx nx e2e @org/frontend-e2e
-
-# Run e2e tests in CI mode
-npx nx e2e-ci @org/frontend-e2e
-```
-
-[Learn more about E2E testing →](https://nx.dev/technologies/test-tools/playwright/introduction#e2e-testing)
-
-### 3. ⚡ Vitest for Unit Testing
-
-Fast unit testing with Vitest for React libraries:
-
-```bash
-# Test a specific library
-npx nx test shop-data
-
-# Test all projects
-npx nx run-many -t test
-```
-
-[Learn more about Vite testing →](https://nx.dev/recipes/vite)
-
-### 4. 🔧 Self-Healing CI
-
-The CI pipeline includes `nx fix-ci` which automatically identifies and suggests fixes for common issues:
-
-```bash
-# In CI, this command provides automated fixes
-npx nx fix-ci
-```
-
-This feature helps maintain a healthy CI pipeline by automatically detecting and suggesting solutions for:
-
-- Missing dependencies
-- Incorrect task configurations
-- Cache invalidation issues
-- Common build failures
-
-[Learn more about self-healing CI →](https://nx.dev/ci/features/self-healing-ci)
-
-## 📁 Project Structure
-
-```
-├── apps/
-│   ├── frontend/       [scope:shop]    - React e-commerce app
-│   ├── frontend-e2e/                   - E2E tests for frontend
-│   └── api/            [scope:api]     - Backend API
-├── libs/
-│   ├── shop/
-│   │   ├── feature-products/        [scope:shop,type:feature] - Product listing
-│   │   ├── feature-product-detail/  [scope:shop,type:feature] - Product details
-│   │   ├── data/                    [scope:shop,type:data]    - Data access
-│   │   └── shared-ui/               [scope:shop,type:ui]      - UI components
-│   ├── api/
-│   │   └── products/    [scope:api]    - Product service
-│   └── shared/
-│       ├── models/      [scope:shared,type:data] - Shared models
-│       └── test-utils/  [scope:shared]           - Testing utilities
-├── nx.json             - Nx configuration
-├── tsconfig.json       - TypeScript configuration
-└── eslint.config.mjs   - ESLint with module boundary rules
-```
-
-## 🏷️ Understanding Tags
-
-This repository uses tags to enforce module boundaries:
-
-| Project                 | Tags                         | Can Import From              |
-| ----------------------- | ---------------------------- | ---------------------------- |
-| `frontend` (`@org/frontend`) | `scope:shop`                 | `scope:shop`, `scope:shared` |
-| `api`                   | `scope:api`                  | `scope:api`, `scope:shared`  |
-| `shop-feature-products` | `scope:shop`, `type:feature` | `scope:shop`, `scope:shared` |
-| `shop-data`             | `scope:shop`, `type:data`    | `scope:shared`               |
-| `models`                | `scope:shared`, `type:data`  | Nothing (base library)       |
-
-## 📚 Useful Commands
-
-```bash
-# Project exploration
-npx nx graph                                    # Interactive dependency graph
-npx nx list                                     # List installed plugins
-npx nx show project @org/frontend --web        # View project details
-
-# Development
-npx nx serve @org/frontend                     # Serve React app
-npx nx serve api                               # Serve backend API
-npx nx build @org/frontend                     # Build React app
-npx nx test shop-data                          # Test a specific library
-npx nx lint shop-feature-products              # Lint a specific library
-
-# Running multiple tasks
-npx nx run-many -t build                       # Build all projects
-npx nx run-many -t test --parallel=3          # Test in parallel
-npx nx run-many -t lint test build            # Run multiple targets
-
-# Affected commands (great for CI)
-npx nx affected -t build                       # Build only affected projects
-npx nx affected -t test                        # Test only affected projects
-```
-
-## 🎯 Adding New Features
-
-### Generate a new React application:
-
-```bash
-npx nx g @nx/react:app my-app
-```
-
-### Generate a new React library:
-
-```bash
-npx nx g @nx/react:lib my-lib
-```
-
-### Generate a new React component:
-
-```bash
-npx nx g @nx/react:component my-component --project=my-lib
-```
-
-### Generate a new API library:
-
-```bash
-npx nx g @nx/node:lib my-api-lib
-```
-
-You can use `npx nx list` to see all available plugins and `npx nx list <plugin-name>` to see all generators for a specific plugin.
-
-## Nx Cloud
-
-Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## 🔗 Learn More
-
-- [Nx Documentation](https://nx.dev)
-- [React Monorepo Tutorial](https://nx.dev/getting-started/tutorials/react-monorepo-tutorial)
-- [Module Boundaries](https://nx.dev/features/enforce-module-boundaries)
-- [Docker Integration](https://nx.dev/recipes/nx-release/release-docker-images)
-- [Playwright Testing](https://nx.dev/technologies/test-tools/playwright/introduction#e2e-testing)
-- [Vite with React](https://nx.dev/recipes/vite)
-- [Nx Cloud](https://nx.dev/ci/intro/why-nx-cloud)
-- [Releasing Packages](https://nx.dev/features/manage-releases)
-
-## 💬 Community
-
-Join the Nx community:
-
-- [Discord](https://go.nx.dev/community)
-- [X (Twitter)](https://twitter.com/nxdevtools)
-- [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [YouTube](https://www.youtube.com/@nxdevtools)
-- [Blog](https://nx.dev/blog)
-# optimal-video-encoder
+MIT

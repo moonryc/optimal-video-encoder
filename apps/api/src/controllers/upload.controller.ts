@@ -9,7 +9,7 @@ import { CONFIG } from '../config';
 
 const uploadDir = path.resolve(
   process.cwd(),
-  CONFIG.uploadDir
+  CONFIG.locationConfig.uploadDir
 );
 
 const ensureUploadDir = () => {

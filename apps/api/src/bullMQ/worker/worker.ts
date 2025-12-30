@@ -7,7 +7,6 @@ import BullMQConversionItem from '../BullMQConversionItem';
 import { StalledFFMPEGError } from '../errors';
 import { isCustomJobProgressGuard, PROGRESS_UPDATE_DEBOUNCE_MS } from './utils';
 import { DataSource } from 'typeorm';
-import { ConversionStatus } from '@org/models';
 
 const logger = getLoggerByName('bullMQ/worker.ts');
 
@@ -25,7 +24,7 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
         password: CONFIG.redisConfig.password,
       },
       concurrency: CONFIG.redisConfig.workerConcurrency, // number of parallel ffmpeg processes
-      //make the locklduration 2 hours
+      //make the lock duration 2 hours
       lockDuration: 7200000, // 2 hours
       stalledInterval: 30000, // Check for stalled jobs every 30 seconds
       maxStalledCount: 2, // Retry stalled jobs twice before failing
@@ -38,11 +37,7 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
         job,
         repo: conversionItemRepo,
       }).initialize();
-      await conversionItem.update({
-        completedAt: new Date(),
-        progress: 100,
-        status: ConversionStatus.COMPLETED,
-      });
+      await conversionItem.markComplete();
       lastProgressUpdateByJobId.delete(conversionItem.path);
       logger.info(`🎉 Job ${job.id} | ${conversionItem.title} completed`);
     } catch (err: unknown) {
@@ -81,10 +76,7 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
       )}`;
       try {
         if (err instanceof StalledFFMPEGError) {
-          await conversionItem.update({
-            stallCounter: conversionItem.stallCounter + 1,
-            timeRemaining: 0,
-          });
+          await conversionItem.increaseStallCounter();
           await conversionItem.job.remove();
           if (conversionItem.stallCounter <= 10) {
             await reEnqueueFile(conversionItem.path);
@@ -104,13 +96,7 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
       );
       try {
         logger.error(`💥 Updating conversion item status ${stackTraceError}`);
-        await conversionItem.update({
-          error: stackTraceError,
-          timeRemaining: 0,
-          erroredAt: new Date(),
-          completedAt: new Date(),
-          status: ConversionStatus.FAILED,
-        });
+        await conversionItem.markFailed(stackTraceError);
       } catch (err: unknown) {
         logger.error(
           `💥 Error updating conversion item status ${
@@ -140,11 +126,7 @@ const startWorker = async ({ds, reEnqueueFile}:{ ds: DataSource, reEnqueueFile:(
     lastProgressUpdateByJobId.set(conversionItem.jobId, now);
 
     try {
-      await conversionItem.update({
-        progress: progress.percentage,
-        status: ConversionStatus.PROCESSING,
-        timeRemaining: progress.timeRemaining,
-      });
+      await conversionItem.updateProgress(progress);
     } catch (error) {
       lastProgressUpdateByJobId.delete(conversionItem.jobId);
       logger.error(

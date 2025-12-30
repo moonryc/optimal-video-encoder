@@ -7,34 +7,35 @@ import { CONFIG } from '../config';
 import { getLoggerByName } from '../utils/getLoggerByName';
 import { ConversionItemDoesNotExistError, MissingJobIdError } from './errors';
 import { ConversionStatus } from '@org/models';
+import { CustomJobProgress } from './worker/utils';
 
 
 export default class BullMQConversionItem extends ConversionItem {
   public readonly job: Job<string>;
   public readonly repo: Repository<ConversionItem>;
-  constructor(input: { job: Job<string>, repo: Repository<ConversionItem>}) {
+  constructor(input: { job: Job<string>; repo: Repository<ConversionItem> }) {
     super();
-    this.job = input.job
-    this.repo = input.repo
+    this.job = input.job;
+    this.repo = input.repo;
   }
 
-  private get logger(){
+  private get logger() {
     return getLoggerByName(`conversion-item-${this.job.id}`);
   }
 
-  get title(){
-    const titleWithFileType =  this.path.split('/').pop();
-    if(!titleWithFileType) throw new Error('Missing title');
+  get title() {
+    const titleWithFileType = this.path.split('/').pop();
+    if (!titleWithFileType) throw new Error('Missing title');
     return titleWithFileType;
   }
 
-  async checkIfFileStillExists(){
+  async checkIfFileStillExists() {
     if (!fs.existsSync(this.path)) {
       await this.update({
-        error: "File no longer exists",
+        error: 'File no longer exists',
         erroredAt: new Date(),
         completedAt: new Date(),
-        status: ConversionStatus.FAILED
+        status: ConversionStatus.FAILED,
       });
       return false;
     }
@@ -45,10 +46,15 @@ export default class BullMQConversionItem extends ConversionItem {
     if (!CONFIG.cleanupOriginals) return;
     fs.unlink(this.path, async (err) => {
       if (err) {
-        this.logger.error(`[${this.title}] | [${this.path}] | Failed to delete original: ${err.message}`);
-        await this.update({ error: `Failed to delete original: \n ${err.message}`, erroredAt: new Date(), completedAt: new Date() });
-      }
-      else {
+        this.logger.error(
+          `[${this.title}] | [${this.path}] | Failed to delete original: ${err.message}`
+        );
+        await this.update({
+          error: `Failed to delete original: \n ${err.message}`,
+          erroredAt: new Date(),
+          completedAt: new Date(),
+        });
+      } else {
         this.logger.info(`[${this.title}] | [${this.path}] | Original deleted`);
       }
     });
@@ -82,20 +88,54 @@ export default class BullMQConversionItem extends ConversionItem {
     await fs.promises.rename(this.path, this.destinationDir);
   }
 
-
-  get jobId():string{
-    if(!this.job.id) throw new MissingJobIdError(this);
+  get jobId(): string {
+    if (!this.job.id) throw new MissingJobIdError(this);
     return this.job.id;
   }
 
-  async initialize(){
-    const ci = await this.repo.findOne({where:{id: this.jobId}});
-    if(!ci) throw new ConversionItemDoesNotExistError(this)
-    Object.assign(this, ci)
-    return this
+  async initialize() {
+    const ci = await this.repo.findOne({ where: { id: this.jobId } });
+    if (!ci) throw new ConversionItemDoesNotExistError(this);
+    Object.assign(this, ci);
+    return this;
   }
 
-  async update(input: QueryDeepPartialEntity<ConversionItem>){
-    await this.repo.update(this.jobId, input)
+  private async update(input: QueryDeepPartialEntity<ConversionItem>) {
+    await this.repo.update(this.jobId, input);
   }
+
+  async markComplete() {
+    await this.update({
+      completedAt: new Date(),
+      progress: 100,
+      status: ConversionStatus.COMPLETED,
+      timeRemaining: 0,
+    });
+  }
+
+  async markFailed(error: string) {
+    await this.update({
+      error,
+      timeRemaining: 0,
+      erroredAt: new Date(),
+      completedAt: new Date(),
+      status: ConversionStatus.FAILED,
+    })
+  }
+
+  async updateProgress({percentage, timeRemaining}:CustomJobProgress) {
+    if (percentage === 100) {
+      await this.markComplete();
+      return;
+    }
+    await this.update({ progress:percentage, timeRemaining });
+  }
+
+  async increaseStallCounter(){
+    await this.update({
+      stallCounter: this.stallCounter + 1,
+      timeRemaining: 0,
+    })
+  }
+
 }
