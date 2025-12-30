@@ -3,7 +3,7 @@ import env from "env-var";
 const getEnv = env.get;
 
 const locationConfig = {
-  watchDirectory: getEnv("WATCH_DIR").default("").asString(),
+  watchDirectory: getEnv("WATCH_DIR").default("./encoder-output/pending-conversion-files").asString(),
   destination: getEnv("DESTINATION_DIR").default("./encoder-output/converted-files").asString(),
   tempDestination: getEnv("TEMP_DIR").default("./encoder-output/converted-files/temp").asString(),
 };
