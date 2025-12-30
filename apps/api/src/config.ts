@@ -31,7 +31,7 @@ export const CONFIG = {
   redisConfig,
   frontendDir: getEnv("FRONTEND_DIR").default("./apps/frontend/dist").asString(),
   uploadDir: getEnv("UPLOAD_DIR").default("./encoder-output/pending-conversion-files").asString(),
-  logOutputLocation: getEnv("LOG_OUTPUT_LOCATION").default("encoder-output/logs").asString(),
+  logOutputLocation: getEnv("LOG_OUTPUT_LOCATION").default("./encoder-output/logs").asString(),
   disableTranscoder: getEnv("DISABLE_TRANSCODER").default("false").asBool(),
   disableFileWatch: getEnv("DISABLE_FILE_WATCH").default("true").asBool(),
   cleanupOriginals: getEnv("CLEANUP_ORIGINALS").default("false").asBool(),
