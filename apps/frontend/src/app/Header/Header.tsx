@@ -7,7 +7,19 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useUploadFileMutation } from '../hooks/api/useUploadFileMutation';
 
-const FileUpload = () => {
+interface HeaderProps {
+  isDeleteMode?: boolean;
+  onToggleDeleteMode?: () => void;
+  onOpenConfirmModal?: () => void;
+  selectedCount?: number;
+}
+
+const Header = ({
+  isDeleteMode = false,
+  onToggleDeleteMode,
+  onOpenConfirmModal,
+  selectedCount = 0,
+}: HeaderProps) => {
   const { mutate, isLoading, progress, error } = useUploadFileMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [selectedName, setSelectedName] = useState<string | null>(null);
@@ -38,8 +50,12 @@ const FileUpload = () => {
   return (
     <Box mb={3}>
       <Stack spacing={2}>
-        <Box>
-          <Button variant="contained" component="label" disabled={isLoading}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <Button
+            variant="contained"
+            component="label"
+            disabled={isLoading || isDeleteMode}
+          >
             Upload Video
             <input
               ref={inputRef}
@@ -49,12 +65,26 @@ const FileUpload = () => {
               onChange={handleFileChange}
             />
           </Button>
-          {selectedName && (
-            <Typography
-              variant="body2"
-              component="span"
-              sx={{ ml: 2, display: 'inline-block' }}
+          <Button
+            variant="outlined"
+            color={isDeleteMode ? 'inherit' : 'error'}
+            onClick={onToggleDeleteMode}
+            disabled={isLoading}
+          >
+            {isDeleteMode ? 'Cancel' : 'Delete'}
+          </Button>
+          {isDeleteMode && (
+            <Button
+              variant="contained"
+              color="error"
+              onClick={onOpenConfirmModal}
+              disabled={selectedCount === 0}
             >
+              Confirm Deletion ({selectedCount})
+            </Button>
+          )}
+          {selectedName && !isDeleteMode && (
+            <Typography variant="body2" component="span">
               {selectedName}
             </Typography>
           )}
@@ -67,4 +97,4 @@ const FileUpload = () => {
   );
 };
 
-export default FileUpload;
+export default Header;

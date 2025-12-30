@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { getConversionItems } from '../controllers/conversion-item.controller';
+import { getConversionItems, deleteConversionItems } from '../controllers/conversion-item.controller';
 import {
   uploadFile,
   uploadMiddleware,
@@ -14,6 +14,7 @@ import { ApiResponse } from '@org/models';
 const router = Router();
 
 router.get("/conversion-items", getConversionItems);
+router.delete("/conversion-items", deleteConversionItems);
 router.get("/settings", getSettings);
 router.post("/settings", updateSettings);
 router.post(
