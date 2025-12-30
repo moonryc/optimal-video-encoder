@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs';
 import { CONFIG } from '../config';
 import { getLoggerByName } from '../utils/getLoggerByName';
-import { ConversionItemDoesNotExistError } from './errors';
+import { ConversionItemDoesNotExistError, MissingJobIdError } from './errors';
 import { ConversionStatus } from '@org/models';
 
 
@@ -84,12 +84,12 @@ export default class BullMQConversionItem extends ConversionItem {
 
 
   get jobId():string{
-    if(!this.job.id) throw new Error('Job ID is required');
+    if(!this.job.id) throw new MissingJobIdError(this);
     return this.job.id;
   }
 
   async initialize(){
-    const ci = this.repo.findOne({where:{id: this.jobId}});
+    const ci = await this.repo.findOne({where:{id: this.jobId}});
     if(!ci) throw new ConversionItemDoesNotExistError(this)
     Object.assign(this, ci)
     return this

@@ -1,5 +1,12 @@
 import { ConversionItem } from '../db';
 
+export class MissingJobIdError extends Error {
+  constructor(input:ConversionItem) {
+    const message = `[MISSING] JonId on file: [${input.path}]`;
+    super(message);
+  }
+}
+
 export class StalledFFMPEGError extends Error {
   constructor(input:ConversionItem) {
     const message = `[STALLED] FFMPEG process stalled on file: [${input.path}]`;
