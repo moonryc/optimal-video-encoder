@@ -32,6 +32,58 @@ services:
       timeout: 5s
       retries: 5
 
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: optimal-video-encoder-api
+    restart: unless-stopped
+    ports:
+      - "3333:3333"
+    volumes:
+      - ./encoder-output:/encoder-output
+    environment:
+      # Server
+      - HOST=0.0.0.0
+      # Database
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USERNAME=app
+      - POSTGRES_PASSWORD=app
+      - POSTGRES_USER=app
+      - POSTGRES_DATABASE=optimal_video_encoder
+      # Redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      # Paths (mounted from host ./encoder-output)
+      - UPLOAD_DIR=/encoder-output/pending-conversion-files
+      - DESTINATION_DIR=/encoder-output/converted-files
+      - TEMP_DIR=/encoder-output/converted-files/temp
+      - LOG_OUTPUT_LOCATION=/encoder-output/logs
+      # Paths (inside container)
+      - FRONTEND_DIR=/app/apps/frontend/dist
+      # Worker
+      - WORKER_CONCURRENCY=1
+      - QUEUE_NAME=video-transcoder
+      # Features
+      - DISABLE_TRANSCODER=false
+      - DISABLE_FILE_WATCH=true
+      - CLEANUP_ORIGINALS=false
+      - DISABLE_DB=false
+      - LOG_PROGRESS=true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3333/api/conversion-items"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
 volumes:
   postgres_data:
   redis_data:
