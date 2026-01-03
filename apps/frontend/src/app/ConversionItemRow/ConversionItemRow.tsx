@@ -16,6 +16,18 @@ import TransposableTable, {
   TransposableTableProps,
 } from '../TransposableTable/TransposableTable';
 
+const formatDuration = (seconds: number): string => {
+  if (seconds <= 0) return '0s';
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  const parts: string[] = [];
+  if (hrs > 0) parts.push(`${hrs}h`);
+  if (mins > 0) parts.push(`${mins}m`);
+  if (secs > 0 || parts.length === 0) parts.push(`${secs}s`);
+  return parts.join(' ');
+};
+
 type ConversionItemRowProps = {
   conversionItem: ConversionItem;
   isDeleteMode?: boolean;
@@ -56,7 +68,7 @@ const ConversionItemRow = ({
         'Updated At',
       ],
       rows: [
-        duration,
+        formatDuration(duration),
         stallCounter,
         createdAt,
         updatedAt,
@@ -104,7 +116,7 @@ const ConversionItemRow = ({
             progress={conversionItem.progress}
           />
         </TableCell>
-        <TableCell align="right">{conversionItem.timeRemaining}</TableCell>
+        <TableCell align="right">{formatDuration(conversionItem.timeRemaining)}</TableCell>
         <TableCell align="right">
           {conversionItem.is4k ? <CheckIcon fontSize={'large'} /> : null}
         </TableCell>

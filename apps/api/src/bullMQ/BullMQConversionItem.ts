@@ -104,6 +104,10 @@ export default class BullMQConversionItem extends ConversionItem {
     await this.repo.update(this.jobId, input);
   }
 
+  async markBeginProcessing(){
+    await this.update({ startedAt: new Date(), status: ConversionStatus.PROCESSING } )
+  }
+
   async markComplete() {
     await this.update({
       completedAt: new Date(),
@@ -120,6 +124,15 @@ export default class BullMQConversionItem extends ConversionItem {
       erroredAt: new Date(),
       completedAt: new Date(),
       status: ConversionStatus.FAILED,
+    })
+  }
+
+  async markError(error: string) {
+    await this.update({
+      erroredAt: new Date(),
+      completedAt: new Date(),
+      status: ConversionStatus.FAILED,
+      error,
     })
   }
 

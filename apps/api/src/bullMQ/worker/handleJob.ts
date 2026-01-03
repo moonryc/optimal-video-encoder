@@ -6,9 +6,8 @@ import { convertToMp4 } from './convertFile';
 import { getLoggerByName } from '../../utils/getLoggerByName';
 import { FileNoLongerExistsError, InvalidJobNameError } from '../errors';
 import { JobName } from '../queue/utils';
-import { ConversionStatus } from '@org/models';
 
-const logger = getLoggerByName("bullMQ/handleJob.ts")
+const logger = getLoggerByName('bullMQ/handleJob.ts');
 
 const handleJob = async ({job,conversionItemRepo}:{job: Job<string>, conversionItemRepo: Repository<ConversionItem>}): Promise<void> => {
   try{
@@ -17,7 +16,7 @@ const handleJob = async ({job,conversionItemRepo}:{job: Job<string>, conversionI
     const stillExists = await conversionItem.checkIfFileStillExists()
     if (!stillExists) throw new FileNoLongerExistsError(conversionItem);
     logger.info(`🔄 Processing ${conversionItem.title}`);
-    await conversionItem.update({ startedAt: new Date(), status: ConversionStatus.PROCESSING });
+    await conversionItem.markBeginProcessing();
     await convertToMp4(conversionItem);
   }catch (error) {
     logger.error(`💥 Error processing job ${error instanceof Error ? error.message : "Unknown error"}`);

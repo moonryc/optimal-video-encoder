@@ -37,6 +37,12 @@ export const useConversionItemsQuery = () => {
 
   useEffect(() => {
     void refetch();
+
+    const interval = setInterval(() => {
+      void refetch();
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, [refetch]);
 
   return { data, isLoading, error, refetch };

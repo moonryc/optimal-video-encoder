@@ -6,7 +6,6 @@ import { MoveFileError, StalledFFMPEGError } from '../errors';
 import { getLoggerByName } from '../../utils/getLoggerByName';
 import BullMQConversionItem from '../BullMQConversionItem';
 import { CustomJobProgress } from './utils';
-import { ConversionStatus } from '@org/models';
 
 const logger = getLoggerByName('convertFile.ts');
 
@@ -47,7 +46,7 @@ const onFFMPEGProgress = async ({ conversionItem, progress, reject }: { conversi
 }
 
 const onFFMPEGError = async ({ conversionItem, reject, error }: { conversionItem: BullMQConversionItem, reject: Reject, error: Error }) => {
-  await conversionItem.update({ error: error.message, erroredAt: new Date(), completedAt: new Date(), status: ConversionStatus.FAILED });
+  await conversionItem.markError(error.message);
   logger.error(`[${conversionItem.title}] | [${conversionItem.path}] | Error updating conversion item status ${error.message}`);
   reject(error);
 }
